@@ -1,7 +1,8 @@
 import { IsBoolean, IsEmail, IsString, Length } from "class-validator";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, Unique } from "typeorm";
 
 @Entity()
+@Unique('unique_email', ['email'])
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -10,7 +11,7 @@ export class User extends BaseEntity {
     @IsString()
     name: string;
 
-    @Column({ unique: true })
+    @Column()
     @IsEmail()
     email: string;
 
