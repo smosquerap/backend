@@ -18,7 +18,7 @@ export class UserController {
     private service = new userService();
 
     @Get("/")
-    getAll() {
+    getAll(@CurrentUser({ required: true }) _user: User) {
         return this.service.getAll();
     }
 
