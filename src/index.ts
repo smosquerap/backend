@@ -14,7 +14,7 @@ useExpressServer(app, {
     currentUserChecker: async (action: Action) => {
         const token = action.request.headers['authorization'];
         if (!token) throw new UnauthorizedError("Invalid token");
-        const decodedToken = verify(token, process.env.JWT_SECRET, (err: any, decoded: any) => {
+        const decodedToken = verify(token, process.env.JWT_SECRET as string, (err: any, decoded: any) => {
             if (err) throw new UnauthorizedError("Invalid token");
             return decoded;
         });

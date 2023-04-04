@@ -15,7 +15,7 @@ export class AuthController {
             const isPasswordCorrect = await compare(body.password, user.password);
             if (!isPasswordCorrect) return { error: "Contraseña incorrecta" };
 
-            const token = sign({ ...body }, process.env.JWT_SECRET, { expiresIn: '10h' });
+            const token = sign({ ...body }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
             return {
                 ...body,
                 token
