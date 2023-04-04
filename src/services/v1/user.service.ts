@@ -1,7 +1,8 @@
 import { hashSync } from "bcryptjs";
+import { QueryFailedError } from "typeorm";
 
 import { User } from "../../models/v1/user.model";
-import { InternalServerError } from "../../utils/exceptions";
+import { BadRequestError, InternalServerError } from "../../utils/exceptions";
 
 export class userService {
     async getAll(): Promise<User[]>  {
@@ -16,7 +17,7 @@ export class userService {
         try {
             return await User.findOneByOrFail({ id });
         } catch (error) {
-            throw new InternalServerError("Server internal error");            
+            throw new InternalServerError("get_one_user_service");            
         }
     }
 
@@ -34,6 +35,11 @@ export class userService {
             user.password = passwordHashed;
             return await User.save(user);
         } catch (error) {
+            if(error instanceof QueryFailedError) {
+                if (error.toString().includes('unique_email')) {
+                    throw new BadRequestError("Email already exists");
+                }
+            }
             throw new InternalServerError("Server internal error");
         }
     }
