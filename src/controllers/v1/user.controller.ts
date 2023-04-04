@@ -28,7 +28,7 @@ export class UserController {
     }
 
     @Post("/")
-    createOne(@CurrentUser({ required: true }) @Body({ validate: true }) user: UserValidator){        
+    createOne(@Body({ validate: true }) user: UserValidator){        
         return this.service.createOne(user as unknown as User);
     }
 
