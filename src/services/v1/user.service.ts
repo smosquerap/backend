@@ -1,13 +1,21 @@
 import { hashSync } from "bcryptjs";
 import { QueryFailedError } from "typeorm";
 
-import { User } from "../../models/v1/user.model";
+import { AppDataSource } from "../../config/dbConfig";
+import { User } from '../../models/v1/user.model';
 import { BadRequestError, InternalServerError } from "../../utils/exceptions";
 
 export class userService {
+
+    private readonly userRepository;
+
+    constructor() {
+        this.userRepository = AppDataSource.getRepository(User);
+    }
+
     async getAll(): Promise<User[]>  {
         try {
-            return await User.find();
+            return await this.userRepository.find();
         } catch (error) {
             throw new InternalServerError("Server internal error");
         }
@@ -15,7 +23,7 @@ export class userService {
 
     async getOne(id: number): Promise<User> {
         try {
-            return await User.findOneByOrFail({ id });
+            return await this.userRepository.findOneByOrFail({ id });
         } catch (error) {
             throw new InternalServerError("get_one_user_service");            
         }
@@ -23,7 +31,7 @@ export class userService {
 
     async getOneByEmail(email: string): Promise<User> {
         try {
-            return await User.findOneByOrFail({ email });
+            return await this.userRepository.findOneByOrFail({ email });
         } catch (error) {
             throw new InternalServerError("Server internal error");            
         }
@@ -33,7 +41,7 @@ export class userService {
         try {            
             const passwordHashed = hashSync(user.password, 10);
             user.password = passwordHashed;
-            return await User.save(user);
+            return await this.userRepository.save(user);
         } catch (error) {
             if(error instanceof QueryFailedError) {
                 if (error.toString().includes('unique_email')) {
@@ -47,7 +55,7 @@ export class userService {
     async updateOne(id:number, user: User): Promise<User> {
         user.id = id
         try {
-            return await User.save(user);
+            return await this.userRepository.save(user);
         } catch (error) {
             throw new InternalServerError("Server internal error");
         }
