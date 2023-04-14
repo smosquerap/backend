@@ -1,9 +1,14 @@
-import { hashSync } from "bcryptjs";
+import { compare, hashSync } from "bcryptjs";
 import { QueryFailedError } from "typeorm";
 
 import { AppDataSource } from "../../config/dbConfig";
 import { User } from '../../models/v1/user.model';
 import { BadRequestError, InternalServerError } from "../../utils/exceptions";
+import { sign } from "jsonwebtoken";
+import dotenv from 'dotenv';
+import { AuthValidator } from "@/validators/user.validator";
+
+dotenv.config()
 
 export class userService {
 
@@ -58,6 +63,21 @@ export class userService {
             return await this.userRepository.save(user);
         } catch (error) {
             throw new InternalServerError("Server internal error");
+        }
+    }
+
+    async signIn(email: string, password: string): Promise<AuthValidator> {
+        try {
+            const user = await this.getOneByEmail(email);
+            const isPasswordCorrect = await compare(password, user.password);
+            if (!isPasswordCorrect) throw new BadRequestError("Email/Password incorrect");
+
+            const token = sign({ ...user }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
+            return {
+                token
+            }
+        } catch (error) {
+            throw new InternalServerError("sign_in_user_service");
         }
     }
 }

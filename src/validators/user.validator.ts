@@ -15,3 +15,10 @@ export class UserValidator {
     @Length(6-100)
     password: string;
 }
+
+@Entity()
+export class AuthValidator {
+    @Column()
+    @IsString()
+    token: string;
+}
