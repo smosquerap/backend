@@ -7,6 +7,7 @@ import { BadRequestError, InternalServerError } from "../../utils/exceptions";
 import { sign } from "jsonwebtoken";
 import dotenv from 'dotenv';
 import { AuthValidator } from "@/validators/user.validator";
+import { envConfig } from "../../config/envConfig";
 
 dotenv.config()
 
@@ -72,7 +73,7 @@ export class userService {
             const isPasswordCorrect = await compare(password, user.password);
             if (!isPasswordCorrect) throw new BadRequestError("Email/Password incorrect");
 
-            const token = sign({ ...user }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
+            const token = sign({ ...user }, envConfig.api.secretKey, { expiresIn: '10h' });
             return {
                 token
             }

@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 import app from "./app";
 import { AppDataSource } from "./config/dbConfig";
 import { UnauthorizedError } from "./utils/exceptions";
+import { envConfig } from "./config/envConfig";
 
 dotenv.config()
 
@@ -14,7 +15,7 @@ useExpressServer(app, {
     currentUserChecker: async (action: Action) => {
         const token = action.request.headers['authorization'];
         if (!token) throw new UnauthorizedError("Invalid token");
-        const decodedToken = verify(token, process.env.JWT_SECRET as string, (err: any, decoded: any) => {
+        const decodedToken = verify(token, envConfig.api.secretKey, (err: any, decoded: any) => {
             if (err) throw new UnauthorizedError("Invalid token");
             return decoded;
         });
@@ -28,7 +29,7 @@ useExpressServer(app, {
 });
 
 async function main() {
-    const port = process.env.PORT || 8000;
+    const port = envConfig.api.port;
     try {
         await AppDataSource.initialize()
         app.listen(port);
