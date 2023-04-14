@@ -2,14 +2,11 @@ import "reflect-metadata";
 import { Action, useExpressServer } from "routing-controllers";
 import { resolve } from "path";
 import { verify } from "jsonwebtoken";
-import dotenv from 'dotenv'
 
 import app from "./app";
 import { AppDataSource } from "./config/dbConfig";
 import { UnauthorizedError } from "./utils/exceptions";
 import { envConfig } from "./config/envConfig";
-
-dotenv.config()
 
 useExpressServer(app, {
     currentUserChecker: async (action: Action) => {

@@ -5,11 +5,8 @@ import { AppDataSource } from "../../config/dbConfig";
 import { User } from '../../models/v1/user.model';
 import { BadRequestError, InternalServerError } from "../../utils/exceptions";
 import { sign } from "jsonwebtoken";
-import dotenv from 'dotenv';
 import { AuthValidator } from "@/validators/user.validator";
 import { envConfig } from "../../config/envConfig";
-
-dotenv.config()
 
 export class userService {
 
