@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { IsBoolean, IsEmail, IsString, Length } from "class-validator";
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, Unique } from "typeorm";
 
@@ -17,6 +18,7 @@ export class User extends BaseEntity {
 
     @Column()
     @Length(6-100)
+    @Exclude()
     password: string;
 
     @Column({
