@@ -8,9 +8,9 @@ import {
     CurrentUser
 } from "routing-controllers";
 
-import { User } from "../../models/v1/user.model";
 import { userService } from "../../services/v1/user.service";
-import { UserValidator } from '../../validators/user.validator';
+import { UserCreateValidator, UserUpdateValidator } from '../../validators/user.validator';
+import { User } from "../../models/v1/user.model";
 
 @JsonController("/users")
 export class UserController {
@@ -23,17 +23,17 @@ export class UserController {
     }
 
     @Get("/:id")
-    getOne(@CurrentUser({ required: true }) @Param("id") id:number) {
+    getOne(@CurrentUser({ required: true }) @Param("id") id: number) {
         return this.service.getOne(id);
     }
 
     @Post("/")
-    createOne(@Body({ validate: true }) user: UserValidator){        
-        return this.service.createOne(user as unknown as User);
+    createOne(@Body({ validate: true }) user: UserCreateValidator){        
+        return this.service.createOne(user as unknown as UserCreateValidator);
     }
 
     @Put("/:id")
-    updateOne(@CurrentUser({ required: true }) @Param("id") id:number, @Body() user: User): Promise<User> {
+    updateOne(@CurrentUser({ required: true }) @Param("id") id: number, @Body() user: UserUpdateValidator) {
         return this.service.updateOne(id, user);
     }
 }

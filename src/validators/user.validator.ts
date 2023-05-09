@@ -1,8 +1,8 @@
-import { IsEmail, IsString, Length } from "class-validator";
+import { IsBoolean, IsEmail, IsObject, IsString, Length } from "class-validator";
 import { Entity, Column } from "typeorm";
 
 @Entity()
-export class UserValidator {
+export class UserCreateValidator {
     @Column()
     @IsString()
     name: string;
@@ -17,8 +17,38 @@ export class UserValidator {
 }
 
 @Entity()
+export class UserUpdateValidator {
+    @Column()
+    @IsString()
+    name: string;
+
+    @Column()
+    @IsEmail()
+    email: string;
+
+    @Column()
+    @IsBoolean()
+    isActive: boolean;
+}
+
+@Entity()
 export class AuthValidator {
     @Column()
     @IsString()
     token: string;
+
+    @Column()
+    @IsObject()
+    user: object;
+}
+
+@Entity()
+export class AuthSignInValidator {
+    @Column()
+    @IsString()
+    email: string;
+
+    @Column()
+    @IsString()
+    password: string;
 }
