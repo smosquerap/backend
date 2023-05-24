@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 
 import { User } from "../models/v1/user.model";
 import { envConfig } from "./envConfig";
+import { Post } from "../models/v1/post.model";
 
 export const AppDataSource =  new DataSource({
     type: 'postgres',
@@ -11,7 +12,8 @@ export const AppDataSource =  new DataSource({
     port: 5432,
     database: envConfig.db.database,
     entities: [
-        User
+        User,
+        Post
     ],
     logging: true, // request from db
     synchronize: true // to restart the entities
