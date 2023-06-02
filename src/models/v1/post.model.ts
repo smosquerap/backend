@@ -1,11 +1,11 @@
 import { IsString } from "class-validator";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
+
 import { User } from "./user.model";
+import { CustomBaseEntity } from "./base.model";
 
 @Entity()
-export class Post extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class Post extends CustomBaseEntity {
 
     @Column()
     @IsString()
@@ -15,13 +15,11 @@ export class Post extends BaseEntity {
     @IsString()
     content: string;
 
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
-
     @ManyToOne(() => User, (user) => user.posts)
+    @JoinColumn({ name: 'user_id'})
     user: User
+
+    @Column('string', { name: 'user_id'})
+    userId: string
 
 }
