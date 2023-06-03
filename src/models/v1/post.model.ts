@@ -1,8 +1,8 @@
-import { IsString } from "class-validator";
 import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
+import { IsString } from "class-validator";
 
-import { User } from "./user.model";
 import { CustomBaseEntity } from "./base.model";
+import { User } from "./user.model";
 
 @Entity()
 export class Post extends CustomBaseEntity {

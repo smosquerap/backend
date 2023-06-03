@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsObject, IsString, Length } from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, IsObject, IsString, Length } from "class-validator";
 import { Entity, Column } from "typeorm";
 
 @Entity()
@@ -45,10 +45,12 @@ export class AuthValidator {
 @Entity()
 export class AuthSignInValidator {
     @Column()
-    @IsString()
+    @IsEmail()
+    @IsNotEmpty()
     email: string;
 
     @Column()
     @IsString()
+    @IsNotEmpty()
     password: string;
 }
