@@ -5,7 +5,8 @@ import {
     Get, 
     Param, 
     Put, 
-    CurrentUser
+    CurrentUser,
+    QueryParam
 } from "routing-controllers";
 
 import { userService } from "../../services/v1/user.service";
@@ -18,8 +19,8 @@ export class UserController {
     private service = new userService();
 
     @Get("/")
-    getAll(@CurrentUser({ required: true }) _user: User) {
-        return this.service.getAll();
+    getAll(@CurrentUser({ required: true }) _user: User, @QueryParam("page") page: number, @QueryParam("size") size: number) {
+        return this.service.getAll(page, size);
     }
 
     @Get("/:id")

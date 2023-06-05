@@ -16,9 +16,26 @@ export class userService {
         this.userRepository = AppDataSource.getRepository(User);
     }
 
-    async getAll(): Promise<User[]>  {
+    async getAll(page: number, size: number): Promise<Object>  {
         try {
-            return await this.userRepository.find();
+            const offset = (page - 1) * size;
+            const totalData = (await this.userRepository.find()).length;
+            const pages = Math.ceil(totalData / size);
+
+            const query = this.userRepository
+                .createQueryBuilder()
+                .select()
+                .skip(offset)
+                .take(size);
+
+            const data = await query.execute(); 
+
+            return {
+                totalData,
+                pages,
+                data
+            }
+
         } catch (error) {
             throw new InternalServerError("Server internal error");
         }
