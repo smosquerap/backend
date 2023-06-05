@@ -5,14 +5,17 @@ import { Entity, Column } from "typeorm";
 export class UserCreateValidator {
     @Column()
     @IsString()
+    @IsNotEmpty()
     name: string;
 
     @Column()
     @IsEmail()
+    @IsNotEmpty()
     email: string;
 
     @Column()
     @Length(6-100)
+    @IsNotEmpty()
     password: string;
 }
 
@@ -20,14 +23,17 @@ export class UserCreateValidator {
 export class UserUpdateValidator {
     @Column()
     @IsString()
+    @IsNotEmpty()
     name: string;
 
     @Column()
     @IsEmail()
+    @IsNotEmpty()
     email: string;
 
     @Column()
     @IsBoolean()
+    @IsNotEmpty()
     isActive: boolean;
 }
 

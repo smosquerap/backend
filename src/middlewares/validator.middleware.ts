@@ -12,7 +12,7 @@ export class ErrorHandler implements ExpressErrorMiddlewareInterface {
       }
       response.status(error.httpCode).json(formattedErrors)
     } else {
-        response.status(error.httpCode).json({ error: error.message });
+        response.status(error.httpCode).json({ error: [error.message] });
     }
     next(error)
   }

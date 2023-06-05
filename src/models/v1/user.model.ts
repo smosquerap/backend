@@ -1,9 +1,9 @@
+import { Entity, Column, Unique, OneToMany } from "typeorm";
 import { Exclude } from "class-transformer";
 import { IsBoolean, IsEmail, IsString, Length } from "class-validator";
-import { Entity, Column, Unique, OneToMany } from "typeorm";
 
-import { Post } from "./post.model";
 import { CustomBaseEntity } from "./base.model";
+import { Post } from "./post.model";
 
 @Entity()
 @Unique('unique_email', ['email'])

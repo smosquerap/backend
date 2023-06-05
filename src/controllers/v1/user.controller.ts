@@ -23,17 +23,17 @@ export class UserController {
     }
 
     @Get("/:id")
-    getOne(@CurrentUser({ required: true }) @Param("id") id: number) {
+    getOne(@CurrentUser({ required: true }) @Param("id") id: string) {
         return this.service.getOne(id);
     }
 
     @Post("/")
     createOne(@Body({ validate: true }) user: UserCreateValidator){        
-        return this.service.createOne(user as unknown as UserCreateValidator);
+        return this.service.createOne(user);
     }
 
     @Put("/:id")
-    updateOne(@CurrentUser({ required: true }) @Param("id") id: number, @Body() user: UserUpdateValidator) {
+    updateOne(@CurrentUser({ required: true }) @Param("id") id: string, @Body() user: UserUpdateValidator) {
         return this.service.updateOne(id, user);
     }
 }

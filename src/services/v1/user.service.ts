@@ -1,12 +1,12 @@
 import { compare, hashSync } from "bcryptjs";
 import { EntityNotFoundError, QueryFailedError } from "typeorm";
+import { sign } from "jsonwebtoken";
 
 import { AppDataSource } from "../../config/dbConfig";
-import { User } from '../../models/v1/user.model';
-import { BadRequestError, InternalServerError } from "../../utils/exceptions";
-import { sign } from "jsonwebtoken";
-import { AuthValidator, UserCreateValidator, UserUpdateValidator } from "@/validators/user.validator";
 import { envConfig } from "../../config/envConfig";
+import { AuthValidator, UserCreateValidator, UserUpdateValidator } from "../../validators/user.validator";
+import { BadRequestError, InternalServerError } from "../../utils/exceptions";
+import { User } from '../../models/v1/user.model';
 
 export class userService {
 
@@ -24,7 +24,7 @@ export class userService {
         }
     }
 
-    async getOne(id: number): Promise<User> {
+    async getOne(id: string): Promise<User> {
         try {
             return await this.userRepository.findOneByOrFail({ id });
         } catch (error) {
@@ -47,16 +47,18 @@ export class userService {
             await this.userRepository.save(user);
             return await this.getOneByEmail(user.email);
         } catch (error) {
-            if(error instanceof QueryFailedError) {
+            if (error instanceof QueryFailedError) {
                 if (error.toString().includes('unique_email')) {
                     throw new BadRequestError("Email already exists");
                 }
+            } else if (error instanceof Error) {
+                throw new InternalServerError(error.message);
             }
             throw new InternalServerError("Server internal error");
         }
     }
 
-    async updateOne(id:number, user: UserUpdateValidator): Promise<User> {
+    async updateOne(id: string, user: UserUpdateValidator): Promise<User> {
         try {
             return await this.userRepository.save({ id, ...user });
         } catch (error) {
@@ -76,7 +78,11 @@ export class userService {
                 user,
             }
         } catch (error) {
-            if (error instanceof EntityNotFoundError) throw new BadRequestError("Email / Password incorrect");
+            if (error instanceof EntityNotFoundError || error instanceof BadRequestError) {
+                throw new BadRequestError("Email / Password incorrect");
+            } else if (error instanceof Error) {
+                throw new InternalServerError(error.message);
+            }
             throw error;
         }
     }
