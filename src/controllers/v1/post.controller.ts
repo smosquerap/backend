@@ -5,7 +5,8 @@ import {
     Get, 
     Param, 
     Put, 
-    CurrentUser
+    CurrentUser,
+    QueryParam
 } from "routing-controllers";
 
 import { postService } from "../../services/v1/post.service";
@@ -18,12 +19,12 @@ export class PostController {
     private service = new postService();
 
     @Get("/")
-    getAll(@CurrentUser({ required: true }) _post: PostEntity) {
-        return this.service.getAll();
+    getAll(@CurrentUser({ required: true }) _post: PostEntity, @QueryParam("page") page: number, @QueryParam("size") size: number) {
+        return this.service.getAll(page, size);
     }
 
     @Get("/:id")
-    getOne(@CurrentUser({ required: true }) @Param("id") id: number) {
+    getOne(@CurrentUser({ required: true }) @Param("id") id: string) {
         return this.service.getOne(id);
     }
 
@@ -33,7 +34,7 @@ export class PostController {
     }
 
     @Put("/:id")
-    updateOne(@CurrentUser({ required: true }) @Param("id") id: number, @Body() post: PostUpdateValidator) {
-        return this.service.updateOne(id, post);
+    updateOne(@CurrentUser({ required: true }) @Param("id") id: string, @Body() postUpdate: PostUpdateValidator) {
+        return this.service.updateOne(id, postUpdate);
     }
 }

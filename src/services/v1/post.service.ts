@@ -11,29 +11,39 @@ export class postService {
         this.postRepository = AppDataSource.getRepository(Post);
     }
 
-    async getAll(): Promise<Post[]>  {
+    async getAll(page: number, size: number): Promise<Object>  {
         try {
-            return await this.postRepository.find({
-                relations: {
-                    user: true
-                }
-            });
+            const offset = (page - 1) * size;
+
+            const [data, totalData] = await this.postRepository
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.user', 'user')
+                .skip(offset)
+                .take(size)
+                .getManyAndCount();
+
+            const pages = Math.ceil(totalData / size);
+
+            return {
+                totalData,
+                pages,
+                data
+            }
         } catch (error) {
             throw new InternalServerError("Server internal error");
         }
     }
 
-    async getOne(id: number): Promise<Post> {
+    async getOne(id: string): Promise<Post> {
         try {
-            const post = await this.postRepository.findOne({
-                where: {
-                    id,
-                },
-                relations: {
-                    user: true
-                }
-            });
-            if(!post) throw new BadRequestError("Post not found"); 
+            const post = await this.postRepository
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.user', 'user')
+                .where('post.id = :id', { id })
+                .getOne();
+
+            if (!post) throw new BadRequestError("Post not found");
+
             return post;
         } catch (error) {
             throw new BadRequestError("Post not found");            
@@ -42,21 +52,30 @@ export class postService {
 
     async createOne(post: PostCreateValidator): Promise<Post> {
         try {
-            return await this.postRepository.save(post);
+            const newPost = this.postRepository.create(post);
+            return await this.postRepository.save(newPost);
         } catch (error) {
             throw new InternalServerError("Server internal error");
         }   
     }
 
-    async updateOne(id:number, post: PostUpdateValidator): Promise<Post> {
-        console.log(id, post);
+    async updateOne(id: string, postUpdate: PostUpdateValidator): Promise<Post> {
         try {
-            return await this.postRepository.save({ id, ...post });
+            await this.postRepository
+                .createQueryBuilder('post')
+                .update(Post)
+                .set(postUpdate)
+                .where('id = :id', { id })
+                .execute();
+
+            const updatedPost = await this.getOne(id);
+            if (!updatedPost) throw new BadRequestError("Post not found");
+
+            return updatedPost;
         } catch (error) {
             console.log(error);
             
             throw new InternalServerError("Server internal error");
         }
     }
-
 }

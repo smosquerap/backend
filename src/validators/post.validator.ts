@@ -1,5 +1,5 @@
 import { User } from "../models/v1/user.model";
-import { IsObject, IsString, Length } from "class-validator";
+import { IsNotEmpty, IsObject, IsString, Length } from "class-validator";
 import { Entity, Column } from "typeorm";
 
 @Entity()
@@ -16,6 +16,7 @@ export class PostCreateValidator {
 
     @Column()
     @IsObject()
+    @IsNotEmpty()
     user: User;
 }
 
@@ -33,5 +34,6 @@ export class PostUpdateValidator {
 
     @Column()
     @IsObject()
+    @IsNotEmpty()
     user: User;
 }

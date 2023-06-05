@@ -15,6 +15,9 @@ export class Post extends CustomBaseEntity {
     @IsString()
     content: string;
 
+    @Column({ nullable: true })
+    name: string;
+
     @ManyToOne(() => User, (user) => user.posts)
     @JoinColumn({ name: 'user_id'})
     user: User
