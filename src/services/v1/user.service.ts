@@ -19,16 +19,14 @@ export class userService {
     async getAll(page: number, size: number): Promise<Object>  {
         try {
             const offset = (page - 1) * size;
-            const totalData = (await this.userRepository.find()).length;
-            const pages = Math.ceil(totalData / size);
 
-            const query = this.userRepository
+            const [data, totalData] = await this.userRepository
                 .createQueryBuilder()
-                .select()
                 .skip(offset)
-                .take(size);
+                .take(size)
+                .getManyAndCount();
 
-            const data = await query.execute(); 
+            const pages = Math.ceil(totalData / size);
 
             return {
                 totalData,
